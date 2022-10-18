@@ -150,7 +150,6 @@ module.exports = {
             attachments.push(graph);
             selectNote.addOptions(data.map(mark => {
                 mark.date = new Date(mark.date);
-                console.log(mark.id);
                 return {
                     label: mark.subject + " - " + (mark.value + "/" + mark.scale),
                     value: mark.id,
