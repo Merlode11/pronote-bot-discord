@@ -47,8 +47,8 @@ module.exports = {
                         " à **" + cour.to.toLocaleTimeString().split(":")[0] +
                         "h" + cour.to.toLocaleTimeString().split(":")[1] + "**" +
                         " *(" + (cour.to.getTime() - cour.from.getTime()) / 1000 / 60 / 60 + "h)*" +
-                        (subHomeworks.length && (!cour.isCancelled || !cour.isAway) ? `\n⚠**__\`${subHomeworks.length}\` Devoirs__**` : "") +
-                        (cour.isCancelled || cour.isAway ? "\n⚠__**Cour annulé**__" : ""));
+                        (subHomeworks.length && ((cour.isCancelled || cour.isAway) && cours.hasDuplicate) ? `\n⚠**__\`${subHomeworks.length}\` Devoirs__**` : "") +
+                        ((cour.isCancelled || cour.isAway) && cours.hasDuplicate ? "\n⚠__**Cour annulé**__" : ""));
             });
             const current = new Date(date.getTime());
             const week = [];

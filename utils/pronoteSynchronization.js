@@ -104,7 +104,7 @@ module.exports = async (client) => {
         nextWeekDay.setDate(nextWeekDay.getDate() + 30);
         const timetable = await session.timetable(new Date(), nextWeekDay);
         const awayNotifications = [];
-        timetable.filter((lesson) => lesson.isAway || lesson.isCancelled).forEach((lesson) => {
+        timetable.filter((lesson) => (lesson.isAway || lesson.isCancelled) && !lession.hasDuplicate).forEach((lesson) => {
             if (!client.cache.lessonsAway.some((lessonID) => lessonID === lesson.id)) {
                 awayNotifications.push({
                     teacher: lesson.teacher,
