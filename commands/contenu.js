@@ -108,16 +108,31 @@ module.exports = {
                 });
             }
 
-            await interaction.editReply({embeds: [embed], components: components, files: attachments, fetchReply: true});
+            // In the case of more than 10 attachments: send the attachments in more in other messages
+            const finalAttachments = []
+            if (attachments.length > 10) {
+                let i = 10;
+                while (i < attachments.length) {
+                    interaction.channel.send({files: attachments.slice(i, i + 10)}).then(m => {
+                        finalAttachments.concat(m.attachments);
+                    });
+                    i += 10;
+                }
+            }
+                
+                
+
+            await interaction.editReply({embeds: [embed], components: components, files: attachments.splice(0, 10), fetchReply: true});
 
             if (files.length > 0) {
                 const e = await interaction.fetchReply();
+                finalAttachments.concat(e.attachments);
                 let string = "";
                 if (files.length > 0) {
                     await client.functions.asyncForEach(files, async (file) => {
                         if (file.type === "file") {
                             const name = client.functions.setFileName(file.name);
-                            const attachment = e.attachments.find(a => a.name === name);
+                            const attachment = finalAttachments.find(a => a.name === name);
                             if (attachment) {
                                 string += `[${file.name}](${attachment.url})\n`;
                             }

@@ -1,6 +1,6 @@
 {
   "name": "pronote-bot-discord",
-  "version": "5.0.8",
+  "version": "5.1.0",
   "description": "Un bot Discord pour envoyer des notifications Pronote dans un serveur Discord 📚",
   "main": "index.js",
   "repository": {

@@ -120,16 +120,30 @@ module.exports = client => {
             });
         }
 
+        const finalAttachments = [];
+        if (files.length > 10) {
+            let i = 10;
+            while (i < files.length) {
+                channel.send({files: files.slice(i, i + 10)}).then(m => {
+                    finalAttachments.concat(m.attachments);
+                }).catch(console.error);
+                i += 10;
+            }
+        }
+
         channel.send({embeds: [embed], files: attachments}).then((e) => {
             if (homework.done) e.react("✅").then(() => {
             });
             if (homework.files.length) {
+                finalAttachments.concat(e.attachments);
                 let string = "";
                 files.forEach(file => {
                     if (file.type === "file") {
                         const name = client.functions.setFileName(file.name);
-                        const attachment = e.attachments.find(a => a.name === name);
-                        if (attachment) string += `[${file.name}](${attachment.url})\n`;
+                        const attachment = finalAttachments.find(a => a.name === name);
+                        if (attachment) {
+                            string += `[${file.name}](${attachment.url})\n`;
+                        }
                         else {
                             string += `${file.name}\n`;
                             console.log("Attachment not found.\nTo found name: " + name, "Original name: " + file.name, "\nAttachments: " + e.attachments.map(a => a.name));
@@ -206,6 +220,7 @@ module.exports = client => {
         const embeds = [embed];
         const attachments = [];
         let files = [];
+
         await client.functions.asyncForEach(splitted, async (s, index) => {
             const embed = new EmbedBuilder()
                 .setDescription(s)
@@ -225,14 +240,29 @@ module.exports = client => {
                 files.push(properties);
             });
         }
+
+        const finalAttachments = [];
+        if (attachments.length > 10) {
+            let i = 10;
+            while (i < attachments.length) {
+                channel.send({files: attachments.slice(i, i + 10)}).then(m => {
+                    finalAttachments.concat(m.attachments);
+                }).catch(console.error);
+                i += 10;
+            }
+        }
+
         channel.send({embeds, files: attachments}).then(m => {
             if (files.length) {
+                finalAttachments.concat(m.attachments);
                 let string = "";
                 files.forEach(file => {
                     if (file.type === "file") {
                         const name = client.functions.setFileName(file.name);
                         const attachment = m.attachments.find(a => a.name === name);
-                        if (attachment) string += `[${file.name}](${attachment.url})\n`;
+                        if (attachment) {
+                            string += `[${file.name}](${attachment.url})\n`;
+                        }
                         else {
                             string += `${file.name}\n`;
                             console.log("Attachment not found.\nID: "+ infoNotif.id +" To found name: " + name, "Original name: " + file.name, "\nAttachments: " + m.attachments.map(a => a.name));
