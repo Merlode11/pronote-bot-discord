@@ -90,7 +90,7 @@ Node.js est requis pour le bon fonctionnement du bot. Il faut donc aller le [té
 
 ### Remplir son `.env`
 ##### `PRONOTE_URL`
-Indiquez ici votre URL sur lequel vous accédez à pronote, sans le `.eleve.html` et sa suite. Il faudra s'arrêter à `/pronote/`
+Indiquez ici votre URL sur lequel vous accédez à pronote, sans le `eleve.html` et sa suite. Il faudra s'arrêter à `/pronote/`
 > Exemple: `https://0050006e.index-education.net/pronote/`
 ##### `PRONOTE_CAS`
 **Uniquement dans le cas où vous ne pouvez PAS vous connecter directement par Pronote, mais devez passer par une interface régionale spéciale.**
