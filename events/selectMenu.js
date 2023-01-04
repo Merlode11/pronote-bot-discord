@@ -91,14 +91,14 @@ module.exports = async (client, interaction) => {
                         (subHomeworks.length && !coursIsAway ? `\n⚠**__\`${subHomeworks.length}\` Devoirs__**` : "") +
                         (coursIsAway ? "\n🚫__**Cour annulé**__" : ""));
                     
-                    if (cour.status && (!coursIsAway || cour.statut !== "Cours annulé")) {
-                        embed.addFields([
-                            {
-                                name: "Status",
-                                value: "__**" + cour.status + "**__"
-                            }
-                        ]);
-                    }
+                if (cour.status && (!coursIsAway || cour.statut !== "Cours annulé")) {
+                    embed.addFields([
+                        {
+                            name: "Status",
+                            value: "__**" + cour.status + "**__"
+                        }
+                    ]);
+                }
                 return embed;
             }).filter(emb => !!emb);
 
@@ -112,9 +112,9 @@ module.exports = async (client, interaction) => {
                                 name: emb.author.name,
                                 value: emb.description,
                                 inline: false
-                            }
+                            };
                         })
-                    )
+                    );
                 embedCours = [embed];
             }
 
@@ -151,6 +151,66 @@ module.exports = async (client, interaction) => {
             interaction.message.edit({
                 embeds: [embed].concat(embedCours),
                 components: [new ActionRowBuilder().addComponents(selectMenu)]
+            });
+        });
+    } else if (interaction.customId === "menus_date") {
+        const value = interaction.values[0].split("/");
+
+        const date = new Date(parseInt(value[2]), parseInt(value[1]) - 1, parseInt(value[0]));
+
+        await client.session.menu(date).then(async (menus) => {
+            const menu = menus[0];
+
+            const embed = new EmbedBuilder()
+                .setTitle("Menu du jour")
+                .setColor("#70C7A4");
+            if (menu) embed
+                .setDescription(`Menu du ${menu.date}`)
+                .setTimestamp(new Date(menu.date))
+                .addFields(menu.meals[0].map((meal) => {
+                    meal = meal[0];
+                    return {
+                        name: meal.name,
+                        value: meal.labels.map((label) => {
+                            return `• ${label}`;
+                        }).join("\n") || "\u200b",
+                        inline: false
+                    };
+                }));
+            else embed.setDescription("Aucun menu n'a été trouvé pour aujourd'hui");
+
+            const warnEmbed = new EmbedBuilder()
+                .setTitle("Attention")
+                .setDescription("Cette commande est en cours de développement. Comme le développeur ne possède pas les menus sur son pronote, il ne peut pas tester correctement cette commande. Si vous rencontrez des problèmes ou que vous voulez aider, merci de contacter le développeur sur github.")
+                .setColor("#FFA500");
+
+            const current = new Date(date.getTime());
+            const week = [];
+            for (let i = 1; i <= 7; i++) {
+                let first = current.getDate() - current.getDay() + i;
+                let day = new Date(current.setDate(first));
+                if (day.getDay() !== 0) week.push(day);
+            }
+            let weekString = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+            const selectMenu = new SelectMenuBuilder()
+                .setCustomId("menus_date")
+                .setPlaceholder("Sélectionnez une date pour voir les cours")
+                .addOptions(week.map((day) => {
+                    return {
+                        label: day.toLocaleDateString(),
+                        value: day.toLocaleDateString(),
+                        description: weekString[day.getDay()] + " " + day.toLocaleDateString().split("/")[0],
+                        default: day.toLocaleDateString() === date.toLocaleDateString()
+                    };
+                }))
+                .setMaxValues(1)
+                .setMinValues(1);
+
+
+            interaction.message.edit({
+                embeds: [embed, warnEmbed],
+                components: [new ActionRowBuilder().addComponents(selectMenu), client.bugActionRow]
             });
         });
     } else if (interaction.customId === "content_select") {

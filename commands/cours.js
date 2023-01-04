@@ -53,14 +53,14 @@ module.exports = {
                         (subHomeworks.length && !coursIsAway ? `\n⚠**__\`${subHomeworks.length}\` Devoirs__**` : "") +
                         (coursIsAway ? "\n🚫__**Cour annulé**__" : ""));
                     
-                    if (cour.status && (!coursIsAway || cour.statut !== "Cours annulé")) {
-                        embed.addFields([
-                            {
-                                name: "Status",
-                                value: "__**" + cour.status + "**__"
-                            }
-                        ]);
-                    }
+                if (cour.status && (!coursIsAway || cour.statut !== "Cours annulé")) {
+                    embed.addFields([
+                        {
+                            name: "Status",
+                            value: "__**" + cour.status + "**__"
+                        }
+                    ]);
+                }
                 return embed;
             }).filter(emb => !!emb);
             
@@ -73,9 +73,9 @@ module.exports = {
                                 name: emb.author.name,
                                 value: emb.description,
                                 inline: false
-                            }
+                            };
                         })
-                    )
+                    );
                 embedCours = [embed];
             }
 
